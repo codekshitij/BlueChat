@@ -1,5 +1,5 @@
 import { Router, type Router as ExpressRouter } from 'express';
-import { PrismaClient, Room, User, Thread, Message, RoomInvite, RoomMembership } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
 import { authenticateToken, AuthRequest } from './middleware/auth';
 import crypto from 'crypto';
 
@@ -24,7 +24,7 @@ router.get('/rooms', authenticateToken, async (req: AuthRequest, res) => {
     });
     console.log(`Found ${rooms.length} rooms for user ${req.user?.username}`);
       if (rooms.length > 0) {
-        console.log('Rooms:', rooms.map((r) => ({ name: r.name, members: (r.users as User[]).map((u) => u.username) })));
+        console.log('Rooms:', rooms.map((r: any) => ({ name: r.name, members: (r.users as any[]).map((u: any) => u.username) })));
       }
     res.json(rooms);
   } catch (err) {
@@ -94,7 +94,7 @@ router.get('/rooms/stats', authenticateToken, async (req: AuthRequest, res) => {
 
     let averageRoomLife = '0h';
     if (ephemeralRooms.length > 0) {
-      const totalLifeMinutes = ephemeralRooms.reduce((sum: number, room: Room) => {
+      const totalLifeMinutes = ephemeralRooms.reduce((sum: number, room: any) => {
         if (room.expiresAt) {
           const lifeMs = room.expiresAt.getTime() - room.createdAt.getTime();
           return sum + (lifeMs / 1000 / 60); // Convert to minutes
@@ -231,7 +231,7 @@ router.get('/threads/:threadId/messages', authenticateToken, async (req: AuthReq
       return res.status(404).json({ error: 'Thread not found' });
     }
     
-    const isMember = thread.room.users.some((u: User) => u.id === req.user?.userId);
+    const isMember = thread.room.users.some((u: any) => u.id === req.user?.userId);
     if (!isMember) {
       return res.status(403).json({ error: 'You are not a member of this room' });
     }
@@ -289,7 +289,7 @@ router.post('/threads/:threadId/messages', authenticateToken, async (req: AuthRe
       return res.status(404).json({ error: 'Thread not found' });
     }
     
-    const isMember = thread.room.users.some((u: User) => u.id === req.user?.userId);
+    const isMember = thread.room.users.some((u: any) => u.id === req.user?.userId);
     if (!isMember) {
       return res.status(403).json({ error: 'You are not a member of this room' });
     }
@@ -335,7 +335,7 @@ router.post('/rooms/:roomId/invite', authenticateToken, async (req: AuthRequest,
       include: { users: { select: { id: true } } }
     });
     if (!room) return res.status(404).json({ error: 'Room not found' });
-    const isMember = room.users.some((u: User) => u.id === req.user?.userId);
+    const isMember = room.users.some((u: any) => u.id === req.user?.userId);
     if (!isMember) return res.status(403).json({ error: 'Not a member of this room' });
 
     // Generate a unique token

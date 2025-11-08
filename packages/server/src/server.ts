@@ -1,5 +1,3 @@
-
-// ...existing code...
 import express, { type Express } from 'express';
 import { PrismaClient } from '@prisma/client';
 // Initialize Prisma Client

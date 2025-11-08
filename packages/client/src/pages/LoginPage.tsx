@@ -7,7 +7,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useStathttps://www.youtube.com/e(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
