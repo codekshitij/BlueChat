@@ -58,15 +58,19 @@ model User {
 
 // Example Room model
 model Room {
-  id          String    @id @default(uuid())
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  name        String
-  isEphemeral Boolean   @default(false)
-  expiresAt   DateTime?
-  memberships RoomMembership[]
-  threads     Thread[]
-  invites     RoomInvite[]
+  id            String    @id @default(uuid())
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  name          String
+  description   String?
+  isPrivate     Boolean   @default(false)
+  allowEditing  Boolean   @default(true)
+  allowDeleting Boolean   @default(true)
+  isEphemeral   Boolean   @default(false)
+  expiresAt     DateTime?
+  memberships   RoomMembership[]
+  threads       Thread[]
+  invites       RoomInvite[]
 }
 
 // Example Thread model
