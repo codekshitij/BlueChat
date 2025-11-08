@@ -1,15 +1,53 @@
 # Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
 
-# dependencies
+# Dependencies
 node_modules/
+.pnp
+.pnp.js
 
-# Expo
-.expo/
+# Production builds
 dist/
+build/
 web-build/
+
+# Environment variables
+.env
+.env.local
+.env*.local
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+pnpm-debug.log*
+lerna-debug.log*
+
+# macOS
+.DS_Store
+*.pem
+Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
 expo-env.d.ts
 
-# Native
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Prisma
+prisma/migrations/
+*.db
+*.db-journal
+
+# Expo (old mobile app files - keeping for reference)
+.expo/
 .kotlin/
 *.orig.*
 *.jks
@@ -17,21 +55,4 @@ expo-env.d.ts
 *.p12
 *.key
 *.mobileprovision
-
-# Metro
 .metro-health-check*
-
-# debug
-npm-debug.*
-yarn-debug.*
-yarn-error.*
-
-# macOS
-.DS_Store
-*.pem
-
-# local env files
-.env*.local
-
-# typescript
-*.tsbuildinfo

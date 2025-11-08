@@ -1,0 +1,97 @@
+// Role enum for room membership
+enum RoomRole {
+  ADMIN
+  MODERATOR
+  MEMBER
+}
+
+// RoomMembership join table
+model RoomMembership {
+  id      String   @id @default(uuid())
+  user    User     @relation(fields: [userId], references: [id])
+  userId  String
+  room    Room     @relation(fields: [roomId], references: [id])
+  roomId  String
+  role    RoomRole @default(MEMBER)
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, roomId])
+}
+// Message model (restored)
+model Message {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  content   String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  thread    Thread    @relation(fields: [threadId], references: [id])
+  threadId  String
+}
+// Prisma schema for BlueChat
+// Define your database models here
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Example User model
+model User {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  username          String   @unique
+  email             String   @unique
+  password          String
+  memberships       RoomMembership[]
+  messages          Message[]
+  resetToken        String?  @unique
+  resetTokenExpiry  DateTime?
+  createdInvites    RoomInvite[] @relation("CreatedBy")
+  usedInvites       RoomInvite[] @relation("UsedBy")
+}
+
+// Example Room model
+model Room {
+  id          String    @id @default(uuid())
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  name        String
+  isEphemeral Boolean   @default(false)
+  expiresAt   DateTime?
+  memberships RoomMembership[]
+  threads     Thread[]
+  invites     RoomInvite[]
+}
+
+// Example Thread model
+model Thread {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  title     String
+  room      Room      @relation(fields: [roomId], references: [id])
+  roomId    String
+  messages  Message[]
+}
+
+
+// RoomInvite model for invitation links
+model RoomInvite {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  token      String   @unique
+  room       Room     @relation(fields: [roomId], references: [id])
+  roomId     String
+  createdBy  User     @relation("CreatedBy", fields: [createdById], references: [id])
+  createdById String
+  expiresAt  DateTime?
+  used       Boolean  @default(false)
+  usedBy     User?    @relation("UsedBy", fields: [usedById], references: [id])
+  usedById   String?
+}

@@ -1,0 +1,317 @@
+# BlueChat - Cursor AI Rules & Guidelines
+
+## Project Overview
+BlueChat is a proximity-based chat app built with React Native (Expo), TypeScript, Firebase, and Zustand. It demonstrates ephemeral messaging with simulated Bluetooth discovery for portfolio/demo purposes.
+
+## Tech Stack
+- **Frontend**: React Native, Expo, TypeScript, Expo Router
+- **State**: Zustand (not Redux)
+- **Backend**: Firebase (Firestore, Functions, Auth)
+- **Styling**: StyleSheet (not styled-components, not CSS-in-JS)
+- **Navigation**: Expo Router (file-based, not React Navigation)
+
+## Project Structure Rules
+
+### Directory Organization
+```
+app/                    # Expo Router screens only
+components/             # Reusable UI components
+  ui/                   # Base components (Button, Input, etc.)
+  rooms/                # Room-specific components  
+  chat/                 # Chat-specific components
+services/               # Business logic & API calls
+store/                  # Zustand state management
+types/                  # TypeScript type definitions
+utils/                  # Helper functions & constants
+firebase/               # Backend functions & config
+```
+
+### File Naming Conventions
+- **Components**: PascalCase (e.g., `Button.tsx`, `MessageBubble.tsx`)
+- **Screens**: camelCase (e.g., `index.tsx`, `rooms.tsx`, `[roomId].tsx`)
+- **Services**: camelCase with .service (e.g., `demo.service.ts`)
+- **Types**: camelCase with .types (e.g., `bluetooth.types.ts`)
+- **Utils**: camelCase (e.g., `constants.ts`, `validation.ts`)
+
+## Coding Standards
+
+### TypeScript Guidelines
+- **Always use TypeScript** - no .js files except config
+- **Strict mode enabled** - handle all type errors
+- **Interface over type** for object definitions
+- **Export interfaces** from types/ directory
+- **No any types** - use proper typing
+
+### React Native Best Practices
+- **Functional components only** - no class components
+- **Hooks over HOCs** - use React hooks pattern
+- **StyleSheet over inline styles** - define styles at bottom
+- **Platform-specific code** when necessary using Platform.OS
+- **Accessibility props** for important UI elements
+
+### Component Structure
+```typescript
+// Import order:
+// 1. React & React Native
+// 2. Third-party libraries  
+// 3. Internal components
+// 4. Services & utilities
+// 5. Types
+
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { Button, Input } from '../components';
+import { demoService } from '../services/demo.service';
+import { User, Room } from '../types';
+
+interface ComponentProps {
+  // Define props interface
+}
+
+export default function ComponentName({ }: ComponentProps) {
+  // Component logic here
+  
+  return (
+    <View style={styles.container}>
+      {/* JSX content */}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  // Styles at bottom
+});
+```
+
+### State Management Rules
+- **Use Zustand store** from `store/index.ts`
+- **No prop drilling** - use store for shared state
+- **Local state** for component-specific data only
+- **Derived state** using selectors when possible
+
+### Styling Guidelines
+- **Color Palette** (Warm Earthy Theme):
+  - Light Background: `#FEFAE0`
+  - Dark Background: `#283618` 
+  - Primary: `#606C38`
+  - Secondary: `#DDA15E`
+  - Accent: `#BC6C25`
+  - White: `#FFFFFF`
+  - Gray Light: `#F3F4F6`
+  - Gray Medium: `#9CA3AF`
+  - Gray Dark: `#374151`
+
+- **Typography Scale**:
+  - Headline: 32px, bold
+  - Title: 20px, bold
+  - Body: 16px, regular
+  - Caption: 14px, regular
+  - Small: 12px, regular
+
+- **Spacing Scale**: 4, 8, 12, 16, 20, 24, 32px
+- **Border Radius**: 6px (small), 12px (medium), 16px (large), 20px (pill)
+
+## Component Guidelines
+
+### Button Component Usage
+```typescript
+<Button
+  title="Join Room"
+  onPress={handleJoin}
+  variant="primary"     // primary | secondary | danger
+  size="medium"         // small | medium | large
+  loading={isLoading}
+  disabled={isDisabled}
+/>
+```
+
+### Input Component Usage
+```typescript
+<Input
+  label="Username"
+  value={value}
+  onChangeText={setValue}
+  placeholder="Enter username"
+  error={errorMessage}
+  maxLength={20}
+/>
+```
+
+### Navigation Rules
+- **Use Expo Router** - `router.push()`, `router.replace()`
+- **File-based routing** - screens in app/ directory
+- **Dynamic routes** - `[roomId].tsx` for parameters
+- **No manual navigation stack** - let Expo Router handle
+
+## Firebase Integration
+
+### Firestore Collections
+```typescript
+// Collection structure:
+temporaryUsers/     # Ephemeral user data
+rooms/             # Chat room information
+messages/          # Chat messages  
+proximityReports/  # Simulated Bluetooth data
+```
+
+### Security Rules Priority
+- **Users can only access their own data**
+- **Room members can read room messages**
+- **Cloud Functions handle room management**
+- **No direct writes to sensitive collections**
+
+## Error Handling
+
+### Error Boundaries
+- **Wrap screens in error boundaries**
+- **Display user-friendly error messages**
+- **Log errors to console (dev) / Crashlytics (prod)**
+
+### Async Operations
+```typescript
+try {
+  setLoading(true);
+  const result = await someAsyncOperation();
+  // Handle success
+} catch (error) {
+  console.error('Operation failed:', error);
+  setError('User-friendly error message');
+} finally {
+  setLoading(false);
+}
+```
+
+## Performance Guidelines
+
+### Optimization Rules
+- **Use FlatList** for long lists, not ScrollView
+- **Implement proper keys** for list items
+- **Avoid inline functions** in render methods
+- **Use useCallback/useMemo** when appropriate
+- **Lazy load components** when possible
+
+### Memory Management
+- **Clean up subscriptions** in useEffect cleanup
+- **Remove event listeners** on unmount
+- **Clear timers/intervals** properly
+
+## Development Workflow
+
+### Git Commit Guidelines
+- **Conventional commits**: `feat:`, `fix:`, `docs:`, `refactor:`
+- **Small, focused commits** - one feature per commit
+- **Clear commit messages** describing what changed
+
+### Testing Approach
+- **Test core user flows** manually
+- **Verify on both iOS and Android** (simulator)
+- **Test web version** in browser
+- **Check responsive design** on different screen sizes
+
+### Code Review Checklist
+- [ ] TypeScript errors resolved
+- [ ] No console.log statements (except for debugging)
+- [ ] Proper error handling implemented
+- [ ] Loading states included
+- [ ] Accessible component structure
+- [ ] Consistent with design system
+
+## AI Assistant Guidelines
+
+### Code Generation Preferences
+- **Always include proper TypeScript types**
+- **Use project's component library** (don't create new basic components)
+- **Follow established patterns** from existing code
+- **Include error handling and loading states**
+- **Use project's color palette and styling**
+
+### Component Creation
+- **Reuse existing components** when possible
+- **Follow component interface patterns**
+- **Include proper documentation/comments**
+- **Implement accessibility features**
+
+### Debugging Assistance
+- **Focus on React Native specific issues**
+- **Consider Expo limitations/requirements**
+- **Suggest Firebase-specific solutions**
+- **Provide mobile-optimized approaches**
+
+## Common Patterns
+
+### Screen Component Template
+```typescript
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { useAppStore } from '../store';
+import { Button, LoadingSpinner } from '../components';
+
+export default function ScreenName() {
+  const [loading, setLoading] = useState(false);
+  const { currentUser } = useAppStore();
+
+  useEffect(() => {
+    // Screen initialization
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner fullScreen text="Loading..." />;
+  }
+
+  return (
+    <View style={styles.container}>
+      {/* Screen content */}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FEFAE0',
+  },
+});
+```
+
+### Service Pattern
+```typescript
+class ServiceName {
+  async methodName(params: Type): Promise<ReturnType> {
+    try {
+      // Implementation
+      return result;
+    } catch (error) {
+      console.error('Service error:', error);
+      throw new Error('User-friendly error message');
+    }
+  }
+}
+
+export const serviceName = new ServiceName();
+```
+
+## Project-Specific Notes
+
+### Demo vs Production
+- **Current phase**: Demo/Portfolio project
+- **Bluetooth simulation**: Use demo service, not real Bluetooth
+- **Firebase optional**: Can work with demo service only
+- **Focus on UI/UX**: Polish over complex backend logic
+
+### Key Differentiators
+- **Ephemeral data model** - privacy-first approach
+- **Room capacity management** - unique 25-user limit
+- **Warm color palette** - different from typical blue tech apps
+- **Proximity concept** - innovative social networking approach
+
+### Success Metrics
+- **Professional visual design**
+- **Smooth user experience**
+- **Clean, documented codebase** 
+- **Working cross-platform demo**
+- **Portfolio-ready presentation**
+
+---
+
+Remember: This is a portfolio project showcasing modern mobile development skills. Prioritize clean code, good UX, and professional presentation over complex features.
