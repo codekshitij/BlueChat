@@ -1,5 +1,5 @@
 import express, { type Express } from 'express';
-import { PrismaClient } from '@prisma/client';
+const { PrismaClient } = require('@prisma/client');
 // Initialize Prisma Client
 const prisma = new PrismaClient();
 import { createServer } from 'http';
