@@ -1,6 +1,7 @@
 import { useState } from 'react';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
+import { useRooms } from '../hooks/useRooms';
 import { X } from 'lucide-react';
-import { roomService } from '../services/room.service';
 
 interface CreateRoomModalProps {
   isOpen: boolean;
@@ -16,35 +17,27 @@ export function CreateRoomModal({ isOpen, onClose, onRoomCreated }: CreateRoomMo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const { user } = useFirebaseAuth();
+  const { createRoom } = useRooms(user ? user.uid : null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    if (!user) {
+      setError('You must be logged in to create a room.');
+      return;
+    }
     if (!name.trim()) {
       setError('Room name is required');
       return;
     }
-
     try {
       setLoading(true);
       setError(null);
-      
-      const expiresAt = isEphemeral 
-        ? new Date(Date.now() + expiresInHours * 60 * 60 * 1000)
-        : undefined;
-
-      await roomService.createRoom({
-        name: name.trim(),
-        description: description.trim() || undefined,
-        isEphemeral,
-        expiresAt,
-      });
-
-      // Reset form
+      await createRoom(name.trim(), expiresInHours);
       setName('');
       setDescription('');
       setIsEphemeral(true);
       setExpiresInHours(24);
-      
       onRoomCreated();
       onClose();
     } catch (err) {

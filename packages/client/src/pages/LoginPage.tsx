@@ -1,27 +1,30 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { authService } from '../services/auth.service';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 
 export function LoginPage() {
   const navigate = useNavigate();
+  const { login, error: authError, loading: authLoading } = useFirebaseAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
     
+    console.log('Login attempt started...');
+    
     try {
-      await authService.login(formData);
+      await login(formData.email, formData.password);
+      console.log('Login successful, navigating to /rooms');
       navigate('/rooms');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Login failed. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('Login error:', err);
+      const errorMessage = authError || (err instanceof Error ? err.message : 'Login failed. Please try again.');
+      console.error('Error message:', errorMessage);
+      setError(errorMessage);
     }
   };
 
@@ -106,10 +109,10 @@ export function LoginPage() {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={authLoading}
               className="w-full bg-gradient-to-r from-primary via-accent to-secondary hover:shadow-xl hover:shadow-primary/30 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Signing in...' : 'Sign In'}
+              {authLoading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 

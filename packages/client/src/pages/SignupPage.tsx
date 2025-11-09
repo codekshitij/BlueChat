@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
-import { authService } from '../services/auth.service';
+import { useFirebaseAuth } from '../hooks/useFirebaseAuth';
 
 export function SignupPage() {
   const navigate = useNavigate();
+  const { register, error: authError, loading: authLoading } = useFirebaseAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({ username: '', email: '', password: '', confirmPassword: '' });
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,17 +23,13 @@ export function SignupPage() {
       setError('Password must be at least 6 characters long');
       return;
     }
-
-    setLoading(true);
     
     try {
       const { username, email, password } = formData;
-      await authService.signup({ username, email, password });
+      await register(email, password, username);
       navigate('/rooms');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Signup failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(authError || (err instanceof Error ? err.message : 'Signup failed. Please try again.'));
     }
   };
 
@@ -140,20 +136,26 @@ export function SignupPage() {
 
             {/* Terms */}
             <div className="flex items-start gap-2 text-sm">
-              <input type="checkbox" className="mt-1 rounded border-border" required />
-              <span className="text-muted-foreground">
+              <input 
+                type="checkbox" 
+                id="terms" 
+                className="mt-1 rounded border-border" 
+                required 
+                aria-label="Accept terms and conditions"
+              />
+              <label htmlFor="terms" className="text-muted-foreground cursor-pointer">
                 I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and{' '}
                 <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-              </span>
+              </label>
             </div>
 
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={authLoading}
               className="w-full bg-gradient-to-r from-primary via-accent to-secondary hover:shadow-xl hover:shadow-primary/30 text-primary-foreground font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {loading ? 'Creating account...' : 'Create Account'}
+              {authLoading ? 'Creating account...' : 'Create Account'}
             </button>
           </form>
 

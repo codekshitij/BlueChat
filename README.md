@@ -1,6 +1,6 @@
 # 🔵 BlueChat - Ephemeral Time-Boxed Chat Platform
 
-A modern, full-stack real-time chat application featuring **ephemeral time-boxed rooms** and **multi-threaded conversations**. Built with React, TypeScript, Node.js, and WebSocket technology.
+A modern, real-time chat web application featuring **ephemeral time-boxed rooms** and **multi-threaded conversations**. Built with React, TypeScript, Vite, and Firebase.
 
 > **Status**: 🚧 In Active Development | **Version**: 1.0.0-alpha
 
@@ -30,7 +30,7 @@ No other chat application combines ephemeral messaging with multi-threaded conve
 ### Prerequisites
 
 - Node.js >= 20.0.0
-- pnpm >= 9.0.0 (we use pnpm workspaces)
+- pnpm >= 9.0.0
 
 ### Installation
 
@@ -42,13 +42,13 @@ cd BlueChat
 # Install dependencies
 pnpm install
 
-# Start both client and server
+# Start the development server
 pnpm dev
 ```
 
 ### Access the App
 
-- **Frontend**: http://localhost:3000
+- **Web App**: http://localhost:5173
 - **Backend API**: http://localhost:5001/api
 - **WebSocket**: ws://localhost:5001
 

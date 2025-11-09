@@ -3,14 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "pnpm --parallel --filter './packages/*' dev",
-    "dev:client": "pnpm --filter client dev",
-    "dev:server": "pnpm --filter server dev",
-    "build": "pnpm --filter './packages/*' build",
-    "build:client": "pnpm --filter client build",
-    "build:server": "pnpm --filter server build",
-    "type-check": "pnpm --filter './packages/*' type-check",
-    "clean": "pnpm --filter './packages/*' clean && rm -rf node_modules"
+    "dev": "pnpm --filter client dev",
+    "build": "pnpm --filter client build",
+    "preview": "pnpm --filter client preview",
+    "type-check": "pnpm --filter client type-check",
+    "clean": "pnpm --filter client clean && rm -rf node_modules"
   },
   "devDependencies": {
     "typescript": "^5.8.3"
